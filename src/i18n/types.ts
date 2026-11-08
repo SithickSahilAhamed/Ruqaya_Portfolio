@@ -140,6 +140,8 @@ export interface Translations {
     success: string
     errorRequired: string
     errorEmail: string
+    submitError: string
+    sending: string
   }
   courses: {
     back: string

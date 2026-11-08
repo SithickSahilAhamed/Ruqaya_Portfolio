@@ -481,10 +481,11 @@ export const en: Translations = {
       'Tell us about your requirements, project location, or questions...',
     whatsappCta: 'WhatsApp (+52 5571986833)',
     send: 'Send Message',
-    success:
-      'Thank you. Your message is ready to send via email. Please complete sending in your email client, or contact us directly via WhatsApp.',
+    success: 'Thank you. Your message has been sent successfully. We will get back to you soon.',
     errorRequired: 'Please fill in all required fields.',
     errorEmail: 'Please enter a valid email address.',
+    submitError: 'Something went wrong while sending your message. Please try again or contact us via WhatsApp.',
+    sending: 'Sending...',
   },
   courses: {
     back: 'Back to Main Site',

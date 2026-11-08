@@ -486,9 +486,12 @@ export const es: Translations = {
     whatsappCta: 'WhatsApp (+52 5571986833)',
     send: 'Enviar Mensaje',
     success:
-      'Gracias. Su mensaje está listo para enviarse por correo. Complete el envío en su cliente de correo, o contáctenos directamente por WhatsApp.',
+      'Gracias. Su mensaje se ha enviado correctamente. Nos pondremos en contacto pronto.',
     errorRequired: 'Por favor complete todos los campos obligatorios.',
     errorEmail: 'Por favor ingrese un correo electrónico válido.',
+    submitError:
+      'Ocurrió un error al enviar su mensaje. Inténtelo de nuevo o contáctenos por WhatsApp.',
+    sending: 'Enviando...',
   },
   courses: {
     back: 'Volver al Sitio Principal',

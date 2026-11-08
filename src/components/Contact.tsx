@@ -5,6 +5,9 @@ import { useLanguage } from '../i18n/LanguageContext'
 const WHATSAPP_URL =
   'https://wa.me/525571986833?text=Hello%20RUQAYA%2C%20I%20would%20like%20to%20inquire%20about%20your%20circular%20economy%20and%20waste%20management%20services.'
 
+const WEB3FORMS_URL = 'https://api.web3forms.com/submit'
+const WEB3FORMS_ACCESS_KEY = 'ddac7632-be2c-4716-bec7-9ab9708b5435'
+
 export function Contact() {
   const { t } = useLanguage()
   const [name, setName] = useState('')
@@ -12,8 +15,9 @@ export function Contact() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccess('')
@@ -27,12 +31,40 @@ export function Contact() {
       return
     }
 
-    const subject = encodeURIComponent(`RUQAYA Inquiry from ${name}`)
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-    )
-    window.location.href = `mailto:hammadhu@gmail.com?subject=${subject}&body=${body}`
-    setSuccess(t.contact.success)
+    setSubmitting(true)
+    try {
+      const response = await fetch(WEB3FORMS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+          subject: `RUQAYA Inquiry from ${name.trim()}`,
+          from_name: 'RUQAYA Portfolio',
+        }),
+      })
+
+      const data = (await response.json()) as { success?: boolean; message?: string }
+
+      if (!response.ok || !data.success) {
+        setError(data.message || t.contact.submitError)
+        return
+      }
+
+      setSuccess(t.contact.success)
+      setName('')
+      setEmail('')
+      setMessage('')
+    } catch {
+      setError(t.contact.submitError)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -95,9 +127,11 @@ export function Contact() {
               <label className="label-mono block mb-2">{t.contact.nameLabel}</label>
               <input
                 type="text"
+                name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.contact.namePlaceholder}
+                required
                 className="w-full bg-white border border-black/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-black/40"
               />
             </div>
@@ -105,19 +139,23 @@ export function Contact() {
               <label className="label-mono block mb-2">{t.contact.emailFieldLabel}</label>
               <input
                 type="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t.contact.emailPlaceholder}
+                required
                 className="w-full bg-white border border-black/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-black/40"
               />
             </div>
             <div>
               <label className="label-mono block mb-2">{t.contact.messageLabel}</label>
               <textarea
+                name="message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t.contact.messagePlaceholder}
                 rows={5}
+                required
                 className="w-full bg-white border border-black/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-black/40 resize-y"
               />
             </div>
@@ -145,9 +183,10 @@ export function Contact() {
               </a>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.12em] px-8 py-3.5 hover:bg-[#333] transition-colors"
+                disabled={submitting}
+                className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.12em] px-8 py-3.5 hover:bg-[#B8860B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {t.contact.send}
+                {submitting ? t.contact.sending : t.contact.send}
               </button>
             </div>
           </form>
