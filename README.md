@@ -5,7 +5,7 @@ Faithful reconstruction of [ruqaya.ai.studio](https://ruqaya.ai.studio/) — Lea
 ## Stack
 
 - React 19 + TypeScript
-- Vite
+- Vite 
 - Tailwind CSS v4
 - Lucide React
 - Framer Motion (available; interactions use CSS transitions matching the reference)
@@ -36,7 +36,9 @@ npm run preview
 
 ## Assets
 
-Original site assets used under fair reconstruction intent:
+Original site assets used under fair reconstruction intent: 
+
+original photos need
 
 - `/public/assets/logo.png`
 - `/public/assets/profile.png`
