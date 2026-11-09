@@ -6,7 +6,7 @@ const WHATSAPP_URL =
   'https://wa.me/525571986833?text=Hello%20RUQAYA%2C%20I%20would%20like%20to%20inquire%20about%20your%20circular%20economy%20and%20waste%20management%20services.'
 
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit'
-const WEB3FORMS_ACCESS_KEY = '0ba54374-daf9-4ab7-8f49-7789fe533a1e'
+const WEB3FORMS_ACCESS_KEY = '9f9a8568-04b1-45cd-a01e-8719535a116a'
 
 export function Contact() {
   const { t } = useLanguage()
