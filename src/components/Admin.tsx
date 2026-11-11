@@ -33,8 +33,20 @@ import {
   uploadCourseImage,
   upsertCourseMedia,
 } from '../lib/courseMedia'
+import {
+  saveUpcomingLive,
+  subscribeUpcomingLive,
+  uploadUpcomingFlyer,
+  type UpcomingLiveCourse,
+  type UpcomingSchedule,
+} from '../lib/upcomingCourse'
 
 const SESSION_KEY = 'ruqaya-admin-auth'
+
+const EMPTY_SCHEDULES: UpcomingSchedule[] = [
+  { id: 'a', dates: '', time: '', note: '' },
+  { id: 'b', dates: '', time: '', note: '' },
+]
 
 interface AdminProps {
   onBack: () => void
@@ -56,6 +68,27 @@ export function Admin({ onBack }: AdminProps) {
   const [customCategory, setCustomCategory] = useState<CourseCategory>('management')
   const [customDesc, setCustomDesc] = useState('')
 
+  // Upcoming Live Course editor
+  const [upcoming, setUpcoming] = useState<UpcomingLiveCourse | null>(null)
+  const [upForm, setUpForm] = useState({
+    cohortMeta: '',
+    registrationOpen: '',
+    programmeMeta: '',
+    courseTitle: '',
+    courseSubtitle: '',
+    courseTagline: '',
+    courseDesc: '',
+    learnTitle: '',
+    learnItemsText: '',
+    formatValue: '',
+    formatCert: '',
+    investmentMxn: '',
+    investmentUsd: '',
+    flyerUrl: '',
+  })
+  const [upSchedules, setUpSchedules] =
+    useState<UpcomingSchedule[]>(EMPTY_SCHEDULES)
+
   useEffect(() => {
     if (!auth) {
       setAuthed(sessionStorage.getItem(SESSION_KEY) === '1')
@@ -73,10 +106,53 @@ export function Admin({ onBack }: AdminProps) {
 
   useEffect(() => {
     if (!authed) return
-    const unsub = subscribeCourseMedia(setMedia, (err) =>
+    const unsubMedia = subscribeCourseMedia(setMedia, (err) =>
       setError(err.message),
     )
-    return () => unsub?.()
+    const unsubUpcoming = subscribeUpcomingLive(
+      (data) => {
+        setUpcoming(data)
+        if (!data) return
+        setUpForm({
+          cohortMeta: data.cohortMeta || '',
+          registrationOpen: data.registrationOpen || '',
+          programmeMeta: data.programmeMeta || '',
+          courseTitle: data.courseTitle || '',
+          courseSubtitle: data.courseSubtitle || '',
+          courseTagline: data.courseTagline || '',
+          courseDesc: data.courseDesc || '',
+          learnTitle: data.learnTitle || '',
+          learnItemsText: (data.learnItems || []).join('\n'),
+          formatValue: data.formatValue || '',
+          formatCert: data.formatCert || '',
+          investmentMxn: data.investmentMxn || '',
+          investmentUsd: data.investmentUsd || '',
+          flyerUrl: data.flyerUrl || '',
+        })
+        const sched = data.schedules?.length
+          ? [
+              {
+                id: data.schedules[0]?.id || 'a',
+                dates: data.schedules[0]?.dates || '',
+                time: data.schedules[0]?.time || '',
+                note: data.schedules[0]?.note || '',
+              },
+              {
+                id: data.schedules[1]?.id || 'b',
+                dates: data.schedules[1]?.dates || '',
+                time: data.schedules[1]?.time || '',
+                note: data.schedules[1]?.note || '',
+              },
+            ]
+          : EMPTY_SCHEDULES
+        setUpSchedules(sched)
+      },
+      (err) => setError(err.message),
+    )
+    return () => {
+      unsubMedia?.()
+      unsubUpcoming?.()
+    }
   }, [authed])
 
   const customCourses = useMemo(
@@ -234,6 +310,83 @@ export function Admin({ onBack }: AdminProps) {
     }
   }
 
+  const handleSaveUpcoming = async (e: FormEvent) => {
+    e.preventDefault()
+    setBusyId('upcoming')
+    setError('')
+    setStatus('')
+    try {
+      const learnItems = upForm.learnItemsText
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean)
+      await saveUpcomingLive({
+        flyerUrl: upForm.flyerUrl || upcoming?.flyerUrl || '',
+        cohortMeta: upForm.cohortMeta.trim(),
+        registrationOpen: upForm.registrationOpen.trim(),
+        programmeMeta: upForm.programmeMeta.trim(),
+        courseTitle: upForm.courseTitle.trim(),
+        courseSubtitle: upForm.courseSubtitle.trim(),
+        courseTagline: upForm.courseTagline.trim(),
+        courseDesc: upForm.courseDesc.trim(),
+        learnTitle: upForm.learnTitle.trim(),
+        learnItems,
+        schedules: upSchedules.map((s, i) => ({
+          id: s.id || String.fromCharCode(97 + i),
+          dates: s.dates.trim(),
+          time: s.time.trim(),
+          note: s.note.trim(),
+        })),
+        formatValue: upForm.formatValue.trim(),
+        formatCert: upForm.formatCert.trim(),
+        investmentMxn: upForm.investmentMxn.trim(),
+        investmentUsd: upForm.investmentUsd.trim(),
+      })
+      setStatus('Upcoming Live Course saved. Public Courses page updates live.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save upcoming course')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const handleUpcomingFlyer = async (file: File | null) => {
+    if (!file) return
+    setBusyId('upcoming-flyer')
+    setError('')
+    setStatus('')
+    try {
+      const flyerUrl = await uploadUpcomingFlyer(file)
+      setUpForm((f) => ({ ...f, flyerUrl }))
+      await saveUpcomingLive({
+        ...(upcoming || {}),
+        flyerUrl,
+        courseTitle: upForm.courseTitle || upcoming?.courseTitle,
+        courseSubtitle: upForm.courseSubtitle || upcoming?.courseSubtitle,
+        schedules: upSchedules,
+        learnItems: upForm.learnItemsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+      })
+      setStatus('Flyer uploaded (free Firestore storage).')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Flyer upload failed')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const patchSchedule = (
+    index: number,
+    field: keyof UpcomingSchedule,
+    value: string,
+  ) => {
+    setUpSchedules((prev) =>
+      prev.map((s, i) => (i === index ? { ...s, [field]: value } : s)),
+    )
+  }
+
   if (!authReady) {
     return (
       <div className="min-h-screen bg-[#F8F7F4] flex items-center justify-center">
@@ -359,6 +512,263 @@ export function Admin({ onBack }: AdminProps) {
             {error}
           </p>
         )}
+
+        <section className="bg-white border border-[#135D29]/30 p-6 space-y-5">
+          <div>
+            <div className="label-mono mb-1 text-[#135D29]">Featured block</div>
+            <h2 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A]">
+              Upcoming Live Course
+            </h2>
+            <p className="mt-1 text-sm text-[#1A1A1A]/65 font-light">
+              Edit the featured cohort on the Courses page (flyer, titles,
+              schedules, pricing). Leave a field blank to keep the site default.
+            </p>
+          </div>
+
+          <form onSubmit={handleSaveUpcoming} className="space-y-5">
+            <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <div className="w-full sm:w-44 aspect-[3/4] bg-[#F8F7F4] border border-black/10 overflow-hidden flex items-center justify-center shrink-0">
+                {upForm.flyerUrl ? (
+                  <img
+                    src={upForm.flyerUrl}
+                    alt="Upcoming flyer"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <ImagePlus className="w-8 h-8 text-[#1A1A1A]/25" />
+                )}
+              </div>
+              <div className="space-y-3 flex-1">
+                <label className="inline-flex items-center gap-1.5 bg-[#135D29] text-[#F8F7F4] font-mono text-[0.65rem] uppercase tracking-[0.08em] px-3 py-2 cursor-pointer hover:bg-[#0C2B22]">
+                  {busyId === 'upcoming-flyer' ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Upload className="w-3 h-3" />
+                  )}
+                  Upload Flyer
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={busyId !== null}
+                    onChange={(e) => {
+                      void handleUpcomingFlyer(e.target.files?.[0] || null)
+                      e.target.value = ''
+                    }}
+                  />
+                </label>
+                <p className="text-xs text-[#1A1A1A]/50 font-mono">
+                  Free Firestore image · replaces /assets/course-flyer.png on
+                  the public page when set
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="label-mono block mb-2">Cohort meta (header)</label>
+                <input
+                  value={upForm.cohortMeta}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, cohortMeta: e.target.value }))
+                  }
+                  placeholder="e.g. November 2026 Live Online Sessions"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Registration line</label>
+                <input
+                  value={upForm.registrationOpen}
+                  onChange={(e) =>
+                    setUpForm((f) => ({
+                      ...f,
+                      registrationOpen: e.target.value,
+                    }))
+                  }
+                  placeholder="Registration Open · Limited Cohort Seats"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="label-mono block mb-2">Programme meta</label>
+                <input
+                  value={upForm.programmeMeta}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, programmeMeta: e.target.value }))
+                  }
+                  placeholder="Practical Online Programme · 2 Days · 8 Hours · Live Interactive"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Headline</label>
+                <input
+                  value={upForm.courseTitle}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, courseTitle: e.target.value }))
+                  }
+                  placeholder="No more introductory courses!"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Course name</label>
+                <input
+                  value={upForm.courseSubtitle}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, courseSubtitle: e.target.value }))
+                  }
+                  placeholder="Master ISO 59004:2024"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="label-mono block mb-2">Tagline</label>
+                <input
+                  value={upForm.courseTagline}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, courseTagline: e.target.value }))
+                  }
+                  placeholder="Circular economy — Vocabulary, principles..."
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="label-mono block mb-2">Description</label>
+                <textarea
+                  value={upForm.courseDesc}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, courseDesc: e.target.value }))
+                  }
+                  rows={3}
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Learn section title</label>
+                <input
+                  value={upForm.learnTitle}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, learnTitle: e.target.value }))
+                  }
+                  placeholder="You Will Learn How To"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">
+                  Learn items (one per line)
+                </label>
+                <textarea
+                  value={upForm.learnItemsText}
+                  onChange={(e) =>
+                    setUpForm((f) => ({
+                      ...f,
+                      learnItemsText: e.target.value,
+                    }))
+                  }
+                  rows={4}
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Format</label>
+                <input
+                  value={upForm.formatValue}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, formatValue: e.target.value }))
+                  }
+                  placeholder="Online · English/Spanish · 8 hours"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Certificate line</label>
+                <input
+                  value={upForm.formatCert}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, formatCert: e.target.value }))
+                  }
+                  placeholder="Certificate of Completion"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Investment MXN</label>
+                <input
+                  value={upForm.investmentMxn}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, investmentMxn: e.target.value }))
+                  }
+                  placeholder="4,500 MXN + 16% VAT"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label className="label-mono block mb-2">Investment USD</label>
+                <input
+                  value={upForm.investmentUsd}
+                  onChange={(e) =>
+                    setUpForm((f) => ({ ...f, investmentUsd: e.target.value }))
+                  }
+                  placeholder="240 USD + 16% VAT"
+                  className="w-full border border-black/15 px-3 py-2.5 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {upSchedules.map((s, index) => (
+                <div
+                  key={s.id}
+                  className="border border-black/10 p-4 space-y-3 bg-[#F8F7F4]/50"
+                >
+                  <div className="label-mono">
+                    Schedule {index === 0 ? 'A' : 'B'}
+                  </div>
+                  <input
+                    value={s.dates}
+                    onChange={(e) =>
+                      patchSchedule(index, 'dates', e.target.value)
+                    }
+                    placeholder="Nov 3 & 4"
+                    className="w-full border border-black/15 px-3 py-2 text-sm bg-white"
+                  />
+                  <input
+                    value={s.time}
+                    onChange={(e) =>
+                      patchSchedule(index, 'time', e.target.value)
+                    }
+                    placeholder="8:30 AM – 12:30 PM CST"
+                    className="w-full border border-black/15 px-3 py-2 text-sm bg-white"
+                  />
+                  <input
+                    value={s.note}
+                    onChange={(e) =>
+                      patchSchedule(index, 'note', e.target.value)
+                    }
+                    placeholder="Cohort A · Weekday Morning"
+                    className="w-full border border-black/15 px-3 py-2 text-sm bg-white"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="submit"
+              disabled={busyId !== null}
+              className="inline-flex items-center justify-center gap-2 bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.08em] px-5 py-3 hover:bg-[#B8860B] disabled:opacity-60"
+            >
+              {busyId === 'upcoming' ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Save className="w-3.5 h-3.5" />
+              )}
+              Save Upcoming Live Course
+            </button>
+          </form>
+        </section>
 
         <section className="bg-white border border-black/15 p-6 space-y-4">
           <div className="flex items-center gap-2">

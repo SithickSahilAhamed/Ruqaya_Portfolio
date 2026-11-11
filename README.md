@@ -48,8 +48,12 @@ npm run preview
 
 ### Free image upload (no paid Storage)
 
-Photos are compressed in the browser and stored in Firestore `courses` docs (`imageUrl`).  
-This uses the free Spark plan — **Firebase Storage / Blaze is not required**.
+Photos are compressed in the browser and stored in Firestore (Spark — **no Blaze**).
+
+- Catalogue photos: `courses/{id}.imageUrl`
+- Upcoming Live flyer: `site/upcomingLive.flyerUrl`
+
+Admin also edits the **Upcoming Live Course** featured block (titles, schedules, investment) at `/admin`.
 
 View: https://console.firebase.google.com/project/ruqaya-portfolio-app/firestore
 

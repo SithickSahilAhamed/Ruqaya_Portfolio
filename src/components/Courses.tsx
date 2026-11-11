@@ -15,6 +15,11 @@ import {
   type CourseMediaDoc,
 } from '../data/courseCatalog'
 import { subscribeCourseMedia } from '../lib/courseMedia'
+import {
+  mergeUpcoming,
+  subscribeUpcomingLive,
+  type UpcomingLiveCourse,
+} from '../lib/upcomingCourse'
 
 interface CoursesProps {
   onBack: () => void
@@ -31,47 +36,92 @@ export function Courses({ onBack }: CoursesProps) {
   const [lightbox, setLightbox] = useState(false)
   const [success, setSuccess] = useState('')
   const [media, setMedia] = useState<Record<string, CourseMediaDoc>>({})
+  const [upcomingOverride, setUpcomingOverride] =
+    useState<UpcomingLiveCourse | null>(null)
 
   useEffect(() => {
-    const unsub = subscribeCourseMedia(setMedia)
-    return () => unsub?.()
+    const unsubMedia = subscribeCourseMedia(setMedia)
+    const unsubUpcoming = subscribeUpcomingLive(setUpcomingOverride)
+    return () => {
+      unsubMedia?.()
+      unsubUpcoming?.()
+    }
   }, [])
 
+  const featured = useMemo(
+    () =>
+      mergeUpcoming(
+        {
+          cohortMeta: t.courses.cohortMeta,
+          registrationOpen: t.courses.registrationOpen,
+          programmeMeta: t.courses.programmeMeta,
+          courseTitle: t.courses.courseTitle,
+          courseSubtitle: t.courses.courseSubtitle,
+          courseTagline: t.courses.courseTagline,
+          courseDesc: t.courses.courseDesc,
+          learnTitle: t.courses.learnTitle,
+          learnItems: t.courses.learnItems,
+          schedules: t.courses.schedules,
+          formatValue: t.courses.formatValue,
+          formatCert: t.courses.formatCert,
+          investmentMxn: t.courses.investmentMxn,
+          investmentUsd: t.courses.investmentUsd,
+        },
+        upcomingOverride,
+      ),
+    [t.courses, upcomingOverride],
+  )
+
+  useEffect(() => {
+    if (!featured.schedules.some((s) => s.id === scheduleId)) {
+      setScheduleId(featured.schedules[0]?.id || 'a')
+    }
+  }, [featured.schedules, scheduleId])
+
   const selected = useMemo(
-    () => t.courses.schedules.find((s) => s.id === scheduleId) ?? t.courses.schedules[0],
-    [scheduleId, t.courses.schedules],
+    () =>
+      featured.schedules.find((s) => s.id === scheduleId) ??
+      featured.schedules[0],
+    [scheduleId, featured.schedules],
   )
 
   const currencyLabel =
-    currency === 'MXN' ? t.courses.investmentMxn : t.courses.investmentUsd
+    currency === 'MXN' ? featured.investmentMxn : featured.investmentUsd
 
-  const scheduleLabel = `${selected.dates} (${selected.time})`
+  const scheduleLabel = selected
+    ? `${selected.dates} (${selected.time})`
+    : ''
+
+  const courseNameForMail =
+    [featured.courseSubtitle, featured.courseTitle]
+      .filter(Boolean)
+      .join(' — ') || 'Upcoming RUQAYA Course'
 
   const whatsappRegister = useMemo(() => {
     const text = encodeURIComponent(
-      `Hello Dr. Hammadhu / RUQAYA Team,\n\nI would like to register for the upcoming practical online programme:\n*Master ISO 59004:2024: Circular Economy Implementation*\n\nPreferred Schedule: ${scheduleLabel}\nParticipant Name: [My Name]\nOrganization: [My Organization]\nCurrency: ${currencyLabel}\n\nPlease share enrollment and payment details. Thank you!`,
+      `Hello Dr. Hammadhu / RUQAYA Team,\n\nI would like to register for the upcoming practical online programme:\n*${courseNameForMail}*\n\nPreferred Schedule: ${scheduleLabel}\nParticipant Name: [My Name]\nOrganization: [My Organization]\nCurrency: ${currencyLabel}\n\nPlease share enrollment and payment details. Thank you!`,
     )
     return `https://wa.me/525571986833?text=${text}`
-  }, [scheduleLabel, currencyLabel])
+  }, [scheduleLabel, currencyLabel, courseNameForMail])
 
   const emailRegister = useMemo(() => {
     const subject = encodeURIComponent(
-      `Course Registration: Master ISO 59004:2024 (${scheduleLabel})`,
+      `Course Registration: ${courseNameForMail} (${scheduleLabel})`,
     )
     const body = encodeURIComponent(
-      `Hello Dr. Hammadhu / RUQAYA Team,\n\nI would like to register for the upcoming practical online programme:\nMaster ISO 59004:2024: Circular Economy Implementation\n\nPreferred Schedule: ${scheduleLabel}\nParticipant Name: [My Name]\nEmail: [My Email]\nPhone / WhatsApp: [My Phone]\nOrganization: [My Organization]\nCurrency: ${currencyLabel}\n\nPlease send invoice / registration confirmation.`,
+      `Hello Dr. Hammadhu / RUQAYA Team,\n\nI would like to register for the upcoming practical online programme:\n${courseNameForMail}\n\nPreferred Schedule: ${scheduleLabel}\nParticipant Name: [My Name]\nEmail: [My Email]\nPhone / WhatsApp: [My Phone]\nOrganization: [My Organization]\nCurrency: ${currencyLabel}\n\nPlease send invoice / registration confirmation.`,
     )
     return `mailto:hammadhu@ruqaya.org?subject=${subject}&body=${body}`
-  }, [scheduleLabel, currencyLabel])
+  }, [scheduleLabel, currencyLabel, courseNameForMail])
 
   const onReserve = (e: FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !email.trim()) return
     const subject = encodeURIComponent(
-      `Seat Reservation: Master ISO 59004:2024 (${scheduleLabel})`,
+      `Seat Reservation: ${courseNameForMail} (${scheduleLabel})`,
     )
     const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nOrganization: ${org || '—'}\nPhone: ${phone || '—'}\nSchedule: ${scheduleLabel}\nCurrency: ${currencyLabel}\nLanguage: ${lang.toUpperCase()}`,
+      `Name: ${name}\nEmail: ${email}\nOrganization: ${org || '—'}\nPhone: ${phone || '—'}\nCourse: ${courseNameForMail}\nSchedule: ${scheduleLabel}\nCurrency: ${currencyLabel}\nLanguage: ${lang.toUpperCase()}`,
     )
     window.location.href = `mailto:hammadhu@ruqaya.org?subject=${subject}&body=${body}`
     setSuccess(t.courses.formSuccess)
@@ -96,7 +146,7 @@ export function Courses({ onBack }: CoursesProps) {
             </span>
             <span className="text-[#B8860B] font-bold">{t.courses.cohortOpen}</span>
             <span className="text-[#1A1A1A]/40">·</span>
-            <span className="text-[#1A1A1A]/60">{t.courses.cohortMeta}</span>
+            <span className="text-[#1A1A1A]/60">{featured.cohortMeta}</span>
           </div>
         </div>
       </div>
@@ -120,7 +170,7 @@ export function Courses({ onBack }: CoursesProps) {
               {t.courses.upcomingBadge}
             </span>
             <span className="text-xs font-mono text-[#1A1A1A]/50">
-              {t.courses.registrationOpen}
+              {featured.registrationOpen}
             </span>
           </div>
 
@@ -137,7 +187,7 @@ export function Courses({ onBack }: CoursesProps) {
                     {t.courses.fullscreen}
                   </button>
                   <a
-                    href="/assets/course-flyer.png"
+                    href={featured.flyerUrl}
                     download
                     className="inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-wider text-[#1A1A1A]/70 hover:text-[#1A1A1A]"
                   >
@@ -151,8 +201,8 @@ export function Courses({ onBack }: CoursesProps) {
                   className="group block w-full overflow-hidden"
                 >
                   <img
-                    src="/assets/course-flyer.png"
-                    alt="Course Flyer: Master ISO 59004:2024 Circular Economy Implementation"
+                    src={featured.flyerUrl}
+                    alt={`Course Flyer: ${featured.courseSubtitle || featured.courseTitle}`}
                     className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                 </button>
@@ -176,26 +226,26 @@ export function Courses({ onBack }: CoursesProps) {
               </div>
 
               <div className="lg:col-span-7 p-6 sm:p-8">
-                <div className="label-mono mb-3">{t.courses.programmeMeta}</div>
+                <div className="label-mono mb-3">{featured.programmeMeta}</div>
                 <h2 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A] font-normal">
-                  {t.courses.courseTitle}
+                  {featured.courseTitle}
                 </h2>
                 <div className="mt-1 font-serif text-2xl sm:text-3xl text-[#135D29]">
-                  {t.courses.courseSubtitle}
+                  {featured.courseSubtitle}
                 </div>
                 <p className="mt-2 text-sm italic text-[#1A1A1A]/70 font-serif">
-                  {t.courses.courseTagline}
+                  {featured.courseTagline}
                 </p>
                 <p className="mt-4 text-sm sm:text-base text-[#1A1A1A]/75 font-light leading-relaxed">
-                  {t.courses.courseDesc}
+                  {featured.courseDesc}
                 </p>
 
                 <div className="mt-6 p-5 bg-[#135D29] text-[#F8F7F4]">
                   <div className="font-mono text-xs font-bold uppercase tracking-[0.1em] mb-4 text-[#C7EB68]">
-                    {t.courses.learnTitle}
+                    {featured.learnTitle}
                   </div>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {t.courses.learnItems.map((item) => (
+                    {featured.learnItems.map((item) => (
                       <li key={item} className="flex items-start gap-2 text-sm font-light">
                         <Check className="w-4 h-4 text-[#C7EB68] shrink-0 mt-0.5" />
                         <span>{item}</span>
@@ -207,7 +257,7 @@ export function Courses({ onBack }: CoursesProps) {
                 <div className="mt-8">
                   <div className="label-mono mb-3">{t.courses.chooseSchedule}</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {t.courses.schedules.map((s) => (
+                    {featured.schedules.map((s) => (
                       <button
                         key={s.id}
                         type="button"
@@ -231,15 +281,15 @@ export function Courses({ onBack }: CoursesProps) {
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 bg-[#F8F7F4] border border-black/10">
                     <div className="label-mono mb-1">{t.courses.formatLabel}</div>
-                    <div className="text-sm text-[#1A1A1A]">{t.courses.formatValue}</div>
+                    <div className="text-sm text-[#1A1A1A]">{featured.formatValue}</div>
                     <div className="text-xs text-[#1A1A1A]/60 mt-1">
-                      {t.courses.formatCert}
+                      {featured.formatCert}
                     </div>
                   </div>
                   <div className="p-4 bg-[#F8F7F4] border border-black/10">
                     <div className="label-mono mb-1">{t.courses.investmentLabel}</div>
-                    <div className="text-sm text-[#1A1A1A]">{t.courses.investmentMxn}</div>
-                    <div className="text-sm text-[#1A1A1A]">{t.courses.investmentUsd}</div>
+                    <div className="text-sm text-[#1A1A1A]">{featured.investmentMxn}</div>
+                    <div className="text-sm text-[#1A1A1A]">{featured.investmentUsd}</div>
                   </div>
                 </div>
               </div>
@@ -340,8 +390,8 @@ export function Courses({ onBack }: CoursesProps) {
                   onChange={(e) => setCurrency(e.target.value as 'MXN' | 'USD')}
                   className="w-full border border-black/15 px-3 py-2.5 text-sm focus:outline-none focus:border-black/40 bg-white"
                 >
-                  <option value="MXN">{t.courses.investmentMxn}</option>
-                  <option value="USD">{t.courses.investmentUsd}</option>
+                  <option value="MXN">{featured.investmentMxn}</option>
+                  <option value="USD">{featured.investmentUsd}</option>
                 </select>
               </div>
 
@@ -485,8 +535,8 @@ export function Courses({ onBack }: CoursesProps) {
           aria-modal="true"
         >
           <img
-            src="/assets/course-flyer.png"
-            alt="Course Flyer"
+            src={featured.flyerUrl}
+            alt={`Course Flyer: ${featured.courseSubtitle || featured.courseTitle}`}
             className="max-w-full max-h-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
