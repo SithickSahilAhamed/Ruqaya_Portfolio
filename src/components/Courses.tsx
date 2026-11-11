@@ -361,7 +361,7 @@ export function Courses({ onBack }: CoursesProps) {
             </form>
           </div>
 
-          <div className="mt-16 lg:mt-20 space-y-10">
+          <div id="course-catalogue" className="mt-16 lg:mt-24 pt-12 border-t border-black/10 space-y-12">
             <div className="max-w-3xl">
               <div className="label-mono mb-2">{t.courses.catalogEyebrow}</div>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A] tracking-[-0.02em] font-normal">
@@ -380,88 +380,69 @@ export function Courses({ onBack }: CoursesProps) {
                   m.category === cat.id &&
                   !PERMANENT_COURSES.some((p) => p.id === m.id),
               )
+              const rows = [
+                ...permanent.map((course) => ({
+                  id: course.id,
+                  title: course.title,
+                  description: media[course.id]?.description,
+                  imageUrl: media[course.id]?.imageUrl,
+                })),
+                ...customs.map((course) => ({
+                  id: course.id,
+                  title: course.title || 'Course',
+                  description: course.description,
+                  imageUrl: course.imageUrl,
+                })),
+              ]
+
               return (
                 <div key={cat.id}>
-                  <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A] mb-5">
+                  <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A] mb-1">
                     {lang === 'es' ? cat.titleEs : cat.titleEn}
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {permanent.map((course) => {
-                      const meta = media[course.id]
-                      return (
-                        <article
-                          key={course.id}
-                          className="bg-white border border-black/10 hover:border-black/25 transition-colors overflow-hidden flex flex-col"
-                        >
-                          {meta?.imageUrl ? (
-                            <div className="aspect-[16/10] overflow-hidden bg-[#F8F7F4]">
-                              <img
-                                src={meta.imageUrl}
-                                alt={course.title}
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                              />
-                            </div>
-                          ) : (
-                            <div className="h-1.5 bg-[#135D29]" />
-                          )}
-                          <div className="p-5 flex flex-col flex-1">
-                            <h4 className="font-serif text-xl text-[#1A1A1A] leading-snug">
-                              {course.title}
-                            </h4>
-                            {meta?.description && (
-                              <p className="mt-2 text-sm text-[#1A1A1A]/70 font-light leading-relaxed">
-                                {meta.description}
-                              </p>
-                            )}
-                            <a
-                              href={`mailto:hammadhu@ruqaya.org?subject=${encodeURIComponent(`Course Inquiry: ${course.title}`)}`}
-                              className="mt-auto pt-4 inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#B8860B] hover:text-[#1A1A1A] transition-colors"
-                            >
-                              {t.courses.inquireCourse}
-                              <ArrowRight className="w-3 h-3" />
-                            </a>
-                          </div>
-                        </article>
-                      )
-                    })}
-                    {customs.map((course) => (
-                      <article
+                  <p className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#1A1A1A]/45 mb-4">
+                    {rows.length} {lang === 'es' ? 'programas' : 'programmes'}
+                  </p>
+                  <ul className="bg-white border border-black/10 divide-y divide-black/10">
+                    {rows.map((course, index) => (
+                      <li
                         key={course.id}
-                        className="bg-white border border-black/10 hover:border-black/25 transition-colors overflow-hidden flex flex-col"
+                        className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 sm:p-5 hover:bg-[#F8F7F4]/80 transition-colors"
                       >
                         {course.imageUrl ? (
-                          <div className="aspect-[16/10] overflow-hidden bg-[#F8F7F4]">
+                          <div className="w-full sm:w-28 shrink-0 aspect-[16/10] sm:aspect-square overflow-hidden bg-[#F8F7F4]">
                             <img
                               src={course.imageUrl}
-                              alt={course.title || 'Course'}
+                              alt={course.title}
                               className="w-full h-full object-cover"
                               loading="lazy"
                             />
                           </div>
                         ) : (
-                          <div className="h-1.5 bg-[#B8860B]" />
+                          <span className="hidden sm:flex w-8 shrink-0 font-mono text-xs text-[#B8860B] tabular-nums">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
                         )}
-                        <div className="p-5 flex flex-col flex-1">
-                          <h4 className="font-serif text-xl text-[#1A1A1A] leading-snug">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-serif text-lg sm:text-xl text-[#1A1A1A] leading-snug">
                             {course.title}
                           </h4>
                           {course.description && (
-                            <p className="mt-2 text-sm text-[#1A1A1A]/70 font-light leading-relaxed">
+                            <p className="mt-1.5 text-sm text-[#1A1A1A]/65 font-light leading-relaxed">
                               {course.description}
                             </p>
                           )}
-                          <a
-                            href={`mailto:hammadhu@ruqaya.org?subject=${encodeURIComponent(`Course Inquiry: ${course.title || ''}`)}`}
-                            className="mt-auto pt-4 inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#B8860B] hover:text-[#1A1A1A] transition-colors"
-                          >
-                            {t.courses.inquireCourse}
-                            <ArrowRight className="w-3 h-3" />
-                          </a>
                         </div>
-                      </article>
+                        <a
+                          href={`mailto:hammadhu@ruqaya.org?subject=${encodeURIComponent(`Course Inquiry: ${course.title}`)}`}
+                          className="shrink-0 inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#B8860B] hover:text-[#1A1A1A] transition-colors"
+                        >
+                          {t.courses.inquireCourse}
+                          <ArrowRight className="w-3 h-3" />
+                        </a>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
               )
             })}
