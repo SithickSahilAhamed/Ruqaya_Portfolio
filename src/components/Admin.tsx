@@ -131,7 +131,7 @@ export function Admin({ onBack }: AdminProps) {
     setError('')
     setStatus('')
     try {
-      const { imageUrl, imagePath } = await uploadCourseImage(courseId, file)
+      const { imageUrl, imagePath, via } = await uploadCourseImage(courseId, file)
       const permanent = PERMANENT_COURSES.find((c) => c.id === courseId)
       await upsertCourseMedia(courseId, {
         title: permanent?.title || media[courseId]?.title,
@@ -142,7 +142,12 @@ export function Admin({ onBack }: AdminProps) {
         custom: media[courseId]?.custom || false,
         featured: media[courseId]?.featured || false,
       })
-      setStatus(`Photo updated for ${permanent?.title || courseId}`)
+      const label = permanent?.title || courseId
+      setStatus(
+        via === 'storage'
+          ? `Photo updated for ${label} (Firebase Storage).`
+          : `Photo updated for ${label} (saved in Firestore — works without Blaze).`,
+      )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
@@ -323,11 +328,28 @@ export function Admin({ onBack }: AdminProps) {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-8 space-y-8">
-        {!isFirebaseConfigured && (
+        {!isFirebaseConfigured ? (
           <div className="p-4 border border-[#B8860B]/40 bg-[#B8860B]/10 text-sm">
             Firebase is not configured yet. Copy <code>.env.example</code> to{' '}
             <code>.env</code>, add your Firebase web app keys, then restart the
-            dev server. Photo upload requires Firestore + Storage.
+            dev server.
+          </div>
+        ) : (
+          <div className="p-4 border border-black/10 bg-white text-sm text-[#1A1A1A]/80">
+            <strong className="text-[#1A1A1A]">Image upload:</strong> use{' '}
+            <em>Upload Photo</em> on any course. Images are compressed and saved
+            to Firebase automatically. Native Firebase Storage is preferred when
+            available; otherwise Firestore fallback is used (no Blaze required).
+            Optional later upgrade:{' '}
+            <a
+              className="text-[#B8860B] underline"
+              href="https://console.firebase.google.com/project/ruqaya-portfolio-app/storage"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              enable Storage (Blaze)
+            </a>
+            .
           </div>
         )}
 
