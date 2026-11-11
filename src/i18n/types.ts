@@ -195,6 +195,10 @@ export interface Translations {
     corporateWhatsapp: string
     corporateEmail: string
     formSuccess: string
+    catalogEyebrow: string
+    catalogTitle: string
+    catalogSubtitle: string
+    inquireCourse: string
   }
   footer: {
     tagline: string

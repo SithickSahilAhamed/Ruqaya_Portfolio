@@ -15,7 +15,7 @@ export function Footer({ onBookServices }: FooterProps) {
           <div className="flex items-start gap-3">
             <div className="w-11 h-11 rounded-md overflow-hidden border border-black/10 bg-white shrink-0">
               <img
-                src="/assets/logo.png"
+                src="/assets/logo.jpg"
                 alt="RUQAYA Logo"
                 className="h-full w-full object-contain"
               />
@@ -30,10 +30,10 @@ export function Footer({ onBookServices }: FooterProps) {
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
             <a
-              href="mailto:hammadhu@gmail.com"
+              href="mailto:hammadhu@ruqaya.org"
               className="text-sm text-[#1A1A1A]/80 hover:text-[#B8860B] transition-colors"
             >
-              hammadhu@gmail.com
+              hammadhu@ruqaya.org
             </a>
             <a
               href="https://wa.me/525571986833"

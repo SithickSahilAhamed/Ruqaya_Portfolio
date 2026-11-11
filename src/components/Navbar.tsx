@@ -58,7 +58,7 @@ export function Navbar({
         >
           <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-md overflow-hidden border border-black/10 bg-white shrink-0">
             <img
-              src="/assets/logo.png"
+              src="/assets/logo.jpg"
               alt="RUQAYA Logo"
               className="h-full w-full object-contain"
             />

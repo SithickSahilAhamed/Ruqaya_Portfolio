@@ -18,7 +18,7 @@ export function Hero({ onBookServices, onOpenCourses, onExpertProfile }: HeroPro
           <div className="flex items-center gap-4 mb-6">
             <div className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-2xl overflow-hidden border border-black/15 shadow-sm flex items-center justify-center bg-white p-2 shrink-0">
               <img
-                src="/assets/logo.png"
+                src="/assets/logo.jpg"
                 alt="RUQAYA Logo"
                 className="h-full w-full object-contain"
               />

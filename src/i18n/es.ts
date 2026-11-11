@@ -549,7 +549,7 @@ export const es: Translations = {
     selectedSchedule: 'Horario seleccionado:',
     registerWhatsapp:
       'Inscribirme Directamente por WhatsApp (+52 5571986833)',
-    registerEmail: 'Email: hammadhu@gmail.com',
+    registerEmail: 'Email: hammadhu@ruqaya.org',
     quote: '¡Convierta los principios de economía circular en acción práctica!',
     formBadge: 'Reservación de Cupo En Línea',
     formTitle: 'Reserve Su Lugar Directamente',
@@ -573,6 +573,11 @@ export const es: Translations = {
     corporateEmail: 'Solicitar Propuesta por Correo',
     formSuccess:
       'Gracias. Su solicitud de reservación está lista — complete el envío en su cliente de correo, o inscríbase directamente por WhatsApp.',
+    catalogEyebrow: 'Catálogo Permanente de Capacitación',
+    catalogTitle: 'Nuestro Portafolio de Cursos',
+    catalogSubtitle:
+      'Programas de gestión, economía circular y sostenibilidad, y gestión de residuos — disponibles en cohortes abiertas y formación in-house.',
+    inquireCourse: 'Consultar',
   },
   footer: {
     tagline: 'Asesoría Estratégica en Economía Circular y Gestión de Residuos',

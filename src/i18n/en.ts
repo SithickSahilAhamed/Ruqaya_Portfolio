@@ -541,7 +541,7 @@ export const en: Translations = {
       'Interested? Send a direct message to register or for clarification.',
     selectedSchedule: 'Selected schedule:',
     registerWhatsapp: 'Register Directly via WhatsApp (+52 5571986833)',
-    registerEmail: 'Email: hammadhu@gmail.com',
+    registerEmail: 'Email: hammadhu@ruqaya.org',
     quote: 'Turn circular economy principles into practical action!',
     formBadge: 'Online Seat Reservation',
     formTitle: 'Reserve Your Seat Directly',
@@ -565,6 +565,11 @@ export const en: Translations = {
     corporateEmail: 'Email RFP / Syllabus Request',
     formSuccess:
       'Thank you. Your reservation request is ready — please complete sending via your email client, or register directly on WhatsApp.',
+    catalogEyebrow: 'Permanent Training Catalogue',
+    catalogTitle: 'Our Course Portfolio',
+    catalogSubtitle:
+      'Management, circular economy & sustainability, and waste management programmes — available for open cohorts and in-house delivery.',
+    inquireCourse: 'Inquire',
   },
   footer: {
     tagline: 'Circular Economy & Waste Management Strategic Advisory',

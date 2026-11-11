@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,6 +9,12 @@ import {
   MessageCircle,
 } from 'lucide-react'
 import { useLanguage } from '../i18n/LanguageContext'
+import {
+  COURSE_CATEGORIES,
+  PERMANENT_COURSES,
+  type CourseMediaDoc,
+} from '../data/courseCatalog'
+import { subscribeCourseMedia } from '../lib/courseMedia'
 
 interface CoursesProps {
   onBack: () => void
@@ -24,6 +30,12 @@ export function Courses({ onBack }: CoursesProps) {
   const [phone, setPhone] = useState('')
   const [lightbox, setLightbox] = useState(false)
   const [success, setSuccess] = useState('')
+  const [media, setMedia] = useState<Record<string, CourseMediaDoc>>({})
+
+  useEffect(() => {
+    const unsub = subscribeCourseMedia(setMedia)
+    return () => unsub?.()
+  }, [])
 
   const selected = useMemo(
     () => t.courses.schedules.find((s) => s.id === scheduleId) ?? t.courses.schedules[0],
@@ -49,7 +61,7 @@ export function Courses({ onBack }: CoursesProps) {
     const body = encodeURIComponent(
       `Hello Dr. Hammadhu / RUQAYA Team,\n\nI would like to register for the upcoming practical online programme:\nMaster ISO 59004:2024: Circular Economy Implementation\n\nPreferred Schedule: ${scheduleLabel}\nParticipant Name: [My Name]\nEmail: [My Email]\nPhone / WhatsApp: [My Phone]\nOrganization: [My Organization]\nCurrency: ${currencyLabel}\n\nPlease send invoice / registration confirmation.`,
     )
-    return `mailto:hammadhu@gmail.com?subject=${subject}&body=${body}`
+    return `mailto:hammadhu@ruqaya.org?subject=${subject}&body=${body}`
   }, [scheduleLabel, currencyLabel])
 
   const onReserve = (e: FormEvent) => {
@@ -61,7 +73,7 @@ export function Courses({ onBack }: CoursesProps) {
     const body = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\nOrganization: ${org || '—'}\nPhone: ${phone || '—'}\nSchedule: ${scheduleLabel}\nCurrency: ${currencyLabel}\nLanguage: ${lang.toUpperCase()}`,
     )
-    window.location.href = `mailto:hammadhu@gmail.com?subject=${subject}&body=${body}`
+    window.location.href = `mailto:hammadhu@ruqaya.org?subject=${subject}&body=${body}`
     setSuccess(t.courses.formSuccess)
   }
 
@@ -349,6 +361,112 @@ export function Courses({ onBack }: CoursesProps) {
             </form>
           </div>
 
+          <div className="mt-16 lg:mt-20 space-y-10">
+            <div className="max-w-3xl">
+              <div className="label-mono mb-2">{t.courses.catalogEyebrow}</div>
+              <h2 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A] tracking-[-0.02em] font-normal">
+                {t.courses.catalogTitle}
+              </h2>
+              <p className="mt-3 text-base text-[#1A1A1A]/75 font-light leading-relaxed">
+                {t.courses.catalogSubtitle}
+              </p>
+            </div>
+
+            {COURSE_CATEGORIES.map((cat) => {
+              const permanent = PERMANENT_COURSES.filter((c) => c.category === cat.id)
+              const customs = Object.values(media).filter(
+                (m) =>
+                  m.custom &&
+                  m.category === cat.id &&
+                  !PERMANENT_COURSES.some((p) => p.id === m.id),
+              )
+              return (
+                <div key={cat.id}>
+                  <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A] mb-5">
+                    {lang === 'es' ? cat.titleEs : cat.titleEn}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {permanent.map((course) => {
+                      const meta = media[course.id]
+                      return (
+                        <article
+                          key={course.id}
+                          className="bg-white border border-black/10 hover:border-black/25 transition-colors overflow-hidden flex flex-col"
+                        >
+                          {meta?.imageUrl ? (
+                            <div className="aspect-[16/10] overflow-hidden bg-[#F8F7F4]">
+                              <img
+                                src={meta.imageUrl}
+                                alt={course.title}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-1.5 bg-[#135D29]" />
+                          )}
+                          <div className="p-5 flex flex-col flex-1">
+                            <h4 className="font-serif text-xl text-[#1A1A1A] leading-snug">
+                              {course.title}
+                            </h4>
+                            {meta?.description && (
+                              <p className="mt-2 text-sm text-[#1A1A1A]/70 font-light leading-relaxed">
+                                {meta.description}
+                              </p>
+                            )}
+                            <a
+                              href={`mailto:hammadhu@ruqaya.org?subject=${encodeURIComponent(`Course Inquiry: ${course.title}`)}`}
+                              className="mt-auto pt-4 inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#B8860B] hover:text-[#1A1A1A] transition-colors"
+                            >
+                              {t.courses.inquireCourse}
+                              <ArrowRight className="w-3 h-3" />
+                            </a>
+                          </div>
+                        </article>
+                      )
+                    })}
+                    {customs.map((course) => (
+                      <article
+                        key={course.id}
+                        className="bg-white border border-black/10 hover:border-black/25 transition-colors overflow-hidden flex flex-col"
+                      >
+                        {course.imageUrl ? (
+                          <div className="aspect-[16/10] overflow-hidden bg-[#F8F7F4]">
+                            <img
+                              src={course.imageUrl}
+                              alt={course.title || 'Course'}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-1.5 bg-[#B8860B]" />
+                        )}
+                        <div className="p-5 flex flex-col flex-1">
+                          <h4 className="font-serif text-xl text-[#1A1A1A] leading-snug">
+                            {course.title}
+                          </h4>
+                          {course.description && (
+                            <p className="mt-2 text-sm text-[#1A1A1A]/70 font-light leading-relaxed">
+                              {course.description}
+                            </p>
+                          )}
+                          <a
+                            href={`mailto:hammadhu@ruqaya.org?subject=${encodeURIComponent(`Course Inquiry: ${course.title || ''}`)}`}
+                            className="mt-auto pt-4 inline-flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[#B8860B] hover:text-[#1A1A1A] transition-colors"
+                          >
+                            {t.courses.inquireCourse}
+                            <ArrowRight className="w-3 h-3" />
+                          </a>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
           <div className="mt-14 p-6 sm:p-8 border border-black/15 bg-white">
             <div className="label-mono mb-2">{t.courses.corporateEyebrow}</div>
             <h2 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A] font-normal max-w-3xl">
@@ -368,7 +486,7 @@ export function Courses({ onBack }: CoursesProps) {
                 <ArrowRight className="w-3.5 h-3.5" />
               </a>
               <a
-                href="mailto:hammadhu@gmail.com?subject=Inquiry:%20Corporate%20In-House%20Circular%20Economy%20Training"
+                href="mailto:hammadhu@ruqaya.org?subject=Inquiry:%20Corporate%20In-House%20Circular%20Economy%20Training"
                 className="inline-flex items-center gap-2 border border-black/20 font-mono text-xs uppercase tracking-[0.08em] px-5 py-3 hover:border-black/40 transition-colors"
               >
                 {t.courses.corporateEmail}

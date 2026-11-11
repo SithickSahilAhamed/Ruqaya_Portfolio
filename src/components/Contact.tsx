@@ -87,13 +87,13 @@ export function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           <div className="lg:col-span-5 space-y-3">
             <a
-              href="mailto:hammadhu@gmail.com"
+              href="mailto:hammadhu@ruqaya.org"
               className="flex items-start gap-3 p-4 bg-white border border-black/10 hover:border-black/30 transition-colors"
             >
               <Mail className="w-4 h-4 text-[#B8860B] mt-0.5 shrink-0" />
               <div>
                 <div className="label-mono mb-1">{t.contact.emailLabel}</div>
-                <div className="text-sm text-[#1A1A1A]">hammadhu@gmail.com</div>
+                <div className="text-sm text-[#1A1A1A]">hammadhu@ruqaya.org</div>
               </div>
             </a>
             <a
