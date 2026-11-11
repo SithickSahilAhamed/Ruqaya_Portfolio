@@ -39,14 +39,24 @@ npm run preview
 
 ## Firebase Admin setup
 
-1. Create a Firebase project and enable **Firestore** + **Storage**.
+1. Firebase project: `ruqaya-portfolio-app` (Firestore in `asia-south1` + Storage).
 2. Copy `.env.example` → `.env` and fill in your web app config keys.
 3. Set `VITE_ADMIN_PASSWORD` (default: `ruqaya-admin`).
-4. In Firestore, create collection `courses` (docs are created automatically by Admin).
-5. In Storage rules, allow authenticated or open write for `courses/` during setup (tighten for production).
-6. Restart `npm run dev`, open `/admin`, log in, upload course photos.
+4. Deploy rules: `npx firebase deploy --only firestore:rules,storage`.
+5. Open `/admin`, log in with the admin password, upload course photos.
+
+### Remaining (Console)
+
+- **Authentication**: Enable Email/Password in Firebase Console → Authentication → Get started, then create `admin@ruqaya.org` (or your `VITE_ADMIN_EMAIL`). After that, tighten Firestore/Storage write rules to `request.auth != null` and wire Admin login to `signInWithEmailAndPassword`.
+- **Storage**: If uploads fail, finish Storage bucket setup in Console (default bucket `ruqaya-portfolio-app.firebasestorage.app`) and redeploy `storage` rules.
+- **Vercel**: Add all `VITE_*` keys from `.env.example` as project env vars (Production + Preview), then redeploy.
 
 Public Courses page shows permanent courses always; photos/descriptions from Firestore appear when configured.
+
+### Admin URL
+
+- Local: `http://127.0.0.1:5173/admin`
+- Production: `https://ruqaya-portfolio.vercel.app/admin`
 
 ## Assets
 
