@@ -131,7 +131,7 @@ export function Admin({ onBack }: AdminProps) {
     setError('')
     setStatus('')
     try {
-      const { imageUrl, imagePath, via } = await uploadCourseImage(courseId, file)
+      const { imageUrl, imagePath } = await uploadCourseImage(courseId, file)
       const permanent = PERMANENT_COURSES.find((c) => c.id === courseId)
       await upsertCourseMedia(courseId, {
         title: permanent?.title || media[courseId]?.title,
@@ -142,11 +142,8 @@ export function Admin({ onBack }: AdminProps) {
         custom: media[courseId]?.custom || false,
         featured: media[courseId]?.featured || false,
       })
-      const label = permanent?.title || courseId
       setStatus(
-        via === 'storage'
-          ? `Photo updated for ${label} (Firebase Storage).`
-          : `Photo updated for ${label} (saved in Firestore — works without Blaze).`,
+        `Photo updated for ${permanent?.title || courseId} (free Firestore storage).`,
       )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')
@@ -228,7 +225,7 @@ export function Admin({ onBack }: AdminProps) {
     if (!confirm('Delete this custom course permanently?')) return
     setBusyId(courseId)
     try {
-      await removeCourseMedia(courseId, media[courseId]?.imagePath)
+      await removeCourseMedia(courseId)
       setStatus('Custom course deleted.')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Delete failed')
@@ -336,18 +333,17 @@ export function Admin({ onBack }: AdminProps) {
           </div>
         ) : (
           <div className="p-4 border border-black/10 bg-white text-sm text-[#1A1A1A]/80">
-            <strong className="text-[#1A1A1A]">Image upload:</strong> use{' '}
-            <em>Upload Photo</em> on any course. Images are compressed and saved
-            to Firebase automatically. Native Firebase Storage is preferred when
-            available; otherwise Firestore fallback is used (no Blaze required).
-            Optional later upgrade:{' '}
+            <strong className="text-[#1A1A1A]">Free photo storage:</strong> use{' '}
+            <em>Upload Photo</em> on any course. Images are compressed in the
+            browser and saved in Firestore (Spark / free — no paid Storage
+            needed). View docs at{' '}
             <a
               className="text-[#B8860B] underline"
-              href="https://console.firebase.google.com/project/ruqaya-portfolio-app/storage"
+              href="https://console.firebase.google.com/project/ruqaya-portfolio-app/firestore"
               target="_blank"
               rel="noopener noreferrer"
             >
-              enable Storage (Blaze)
+              Firestore → courses
             </a>
             .
           </div>

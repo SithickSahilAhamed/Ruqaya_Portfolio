@@ -46,19 +46,12 @@ npm run preview
 5. Deploy rules: `npx firebase deploy --only firestore:rules` (add `,storage` after Storage is provisioned).
 6. Open `/admin`, sign in, upload course photos.
 
-### Image upload plan (complete)
+### Free image upload (no paid Storage)
 
-| Priority | Backend | Status |
-|---|---|---|
-| 1 | Firebase Storage | Optional — needs Blaze + Get Started |
-| 2 | Compressed JPEG in Firestore course docs | **Active now (Spark)** |
+Photos are compressed in the browser and stored in Firestore `courses` docs (`imageUrl`).  
+This uses the free Spark plan — **Firebase Storage / Blaze is not required**.
 
-Admin tries Storage first (cached after first probe), then compresses to JPEG ≤ ~700KB and saves to the course Firestore doc. Public Courses page always shows the permanent catalogue; photos appear when uploaded.
-
-Optional Storage upgrade later:
-1. Open https://console.firebase.google.com/project/ruqaya-portfolio-app/storage
-2. Upgrade / Get Started (Blaze; free tier still applies)
-3. `npx firebase deploy --only storage`
+View: https://console.firebase.google.com/project/ruqaya-portfolio-app/firestore
 
 ### Admin URL
 
