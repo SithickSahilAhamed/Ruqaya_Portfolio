@@ -1,13 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public read for Courses page.
-    // Writes are gated by the client Admin password (VITE_ADMIN_PASSWORD)
-    // until Firebase Authentication (email/password) is enabled in Console,
-    // after which tighten to: allow write: if request.auth != null;
+    // Public Courses page can read; Admin writes require Firebase Auth.
     match /courses/{courseId} {
       allow read: if true;
-      allow write: if true;
+      allow write: if request.auth != null;
     }
 
     match /{document=**} {

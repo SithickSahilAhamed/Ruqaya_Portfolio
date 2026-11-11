@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth'
+import {
   ArrowLeft,
   ImagePlus,
   Loader2,
@@ -16,7 +21,12 @@ import {
   type CourseCategory,
   type CourseMediaDoc,
 } from '../data/courseCatalog'
-import { ADMIN_PASSWORD, isFirebaseConfigured } from '../lib/firebase'
+import {
+  ADMIN_EMAIL,
+  ADMIN_PASSWORD,
+  auth,
+  isFirebaseConfigured,
+} from '../lib/firebase'
 import {
   removeCourseMedia,
   subscribeCourseMedia,
@@ -31,11 +41,11 @@ interface AdminProps {
 }
 
 export function Admin({ onBack }: AdminProps) {
-  const [authed, setAuthed] = useState(
-    () => sessionStorage.getItem(SESSION_KEY) === '1',
-  )
+  const [authed, setAuthed] = useState(false)
+  const [authReady, setAuthReady] = useState(false)
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
+  const [loggingIn, setLoggingIn] = useState(false)
   const [media, setMedia] = useState<Record<string, CourseMediaDoc>>({})
   const [busyId, setBusyId] = useState<string | null>(null)
   const [status, setStatus] = useState('')
@@ -45,6 +55,21 @@ export function Admin({ onBack }: AdminProps) {
   const [customTitle, setCustomTitle] = useState('')
   const [customCategory, setCustomCategory] = useState<CourseCategory>('management')
   const [customDesc, setCustomDesc] = useState('')
+
+  useEffect(() => {
+    if (!auth) {
+      setAuthed(sessionStorage.getItem(SESSION_KEY) === '1')
+      setAuthReady(true)
+      return
+    }
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setAuthed(Boolean(user))
+      if (user) sessionStorage.setItem(SESSION_KEY, '1')
+      else sessionStorage.removeItem(SESSION_KEY)
+      setAuthReady(true)
+    })
+    return () => unsub()
+  }, [])
 
   useEffect(() => {
     if (!authed) return
@@ -62,21 +87,42 @@ export function Admin({ onBack }: AdminProps) {
     [media],
   )
 
-  const onLogin = (e: FormEvent) => {
+  const onLogin = async (e: FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, '1')
-      setAuthed(true)
-      setLoginError('')
-      setPassword('')
-    } else {
-      setLoginError('Incorrect password.')
+    setLoginError('')
+    setLoggingIn(true)
+    try {
+      if (auth && isFirebaseConfigured) {
+        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password)
+        sessionStorage.setItem(SESSION_KEY, '1')
+        setAuthed(true)
+        setPassword('')
+        return
+      }
+      if (password === ADMIN_PASSWORD) {
+        sessionStorage.setItem(SESSION_KEY, '1')
+        setAuthed(true)
+        setPassword('')
+      } else {
+        setLoginError('Incorrect password.')
+      }
+    } catch {
+      setLoginError('Incorrect email/password for admin.')
+    } finally {
+      setLoggingIn(false)
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
     sessionStorage.removeItem(SESSION_KEY)
     setAuthed(false)
+    if (auth) {
+      try {
+        await signOut(auth)
+      } catch {
+        // ignore
+      }
+    }
   }
 
   const handleUpload = async (courseId: string, file: File | null) => {
@@ -186,6 +232,14 @@ export function Admin({ onBack }: AdminProps) {
     }
   }
 
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-[#F8F7F4] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[#B8860B]" />
+      </div>
+    )
+  }
+
   if (!authed) {
     return (
       <div className="min-h-screen bg-[#F8F7F4] flex items-center justify-center px-4">
@@ -200,6 +254,9 @@ export function Admin({ onBack }: AdminProps) {
           <p className="text-sm text-[#1A1A1A]/70 font-light">
             Manage course photos and catalog content for the Courses page.
           </p>
+          {isFirebaseConfigured && (
+            <p className="text-xs font-mono text-[#1A1A1A]/55">{ADMIN_EMAIL}</p>
+          )}
           <div>
             <label className="label-mono block mb-2">Password</label>
             <input
@@ -208,6 +265,7 @@ export function Admin({ onBack }: AdminProps) {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-black/15 px-4 py-3 text-sm focus:outline-none focus:border-black/40"
               autoFocus
+              disabled={loggingIn}
             />
           </div>
           {loginError && (
@@ -225,9 +283,10 @@ export function Admin({ onBack }: AdminProps) {
             </button>
             <button
               type="submit"
-              className="flex-1 bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.08em] py-3 hover:bg-[#B8860B] transition-colors"
+              disabled={loggingIn}
+              className="flex-1 bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.08em] py-3 hover:bg-[#B8860B] transition-colors disabled:opacity-60"
             >
-              Enter
+              {loggingIn ? 'Signing in…' : 'Enter'}
             </button>
           </div>
         </form>

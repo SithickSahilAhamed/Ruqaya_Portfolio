@@ -37,4 +37,7 @@ export { app, auth, db, storage }
 export const ADMIN_PASSWORD =
   (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) || 'ruqaya-admin'
 
+export const ADMIN_EMAIL =
+  (import.meta.env.VITE_ADMIN_EMAIL as string | undefined) || 'admin@ruqaya.org'
+
 export const COURSES_COLLECTION = 'courses'
