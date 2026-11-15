@@ -24,7 +24,7 @@ export const en: Translations = {
       'Life cycle analysis and ESG, carbon footprint analysis services',
     ],
     bookServices: 'Book Services',
-    upcomingCourse: 'Upcoming Course (ISO 59004)',
+    upcomingCourse: 'Ongoing Course (ISO 59004)',
     expertProfile: "Our Expert's Profile",
     metrics: [
       {
@@ -57,7 +57,7 @@ export const en: Translations = {
         id: '01',
         track: 'Track 01',
         title: 'Capacity Building',
-        primaryCta: 'Upcoming Courses',
+        primaryCta: 'Ongoing Courses',
         primaryAction: 'courses',
         secondaryCta: 'Book Custom Training',
         secondaryAction: 'contact',
@@ -489,14 +489,19 @@ export const en: Translations = {
   },
   courses: {
     back: 'Back to Main Site',
-    cohortOpen: 'Upcoming Cohort Open',
+    cohortOpen: 'Ongoing Cohort Open',
     cohortMeta: 'November 2026 Live Online Sessions',
     eyebrow: 'RUQAYA Executive Academy · Capacity Building',
     title: 'Courses & Training Programmes',
     description:
       'Go beyond superficial introductory webinars. We deliver actionable, standards-grounded training designed to equip executives, engineers, and sustainability teams with real circular economy implementation tools.',
-    upcomingBadge: 'Upcoming Live Course',
+    upcomingBadge: 'Ongoing Live Course',
     registrationOpen: 'Registration Open · Limited Cohort Seats',
+    paymentTitle: 'Enrollment & Secure Payment',
+    paymentSubtitle:
+      'Reserve your seat first. A trusted payment link (card / bank transfer) is shared privately after confirmation — no public checkout fees exposed on the page.',
+    paymentPrimary: 'Request Secure Payment Link',
+    paymentNote: 'Gateway-ready · Invoice available · MXN & USD',
     fullscreen: 'Fullscreen Flyer',
     download: 'Download Flyer',
     ledBy: 'Led by Dr. Hammadhu Rukiya Jalva',

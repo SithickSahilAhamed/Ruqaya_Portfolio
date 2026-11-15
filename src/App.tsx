@@ -121,7 +121,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#1A1A1A]">
+    <div className="min-h-screen bg-[#eef4f0] text-[#0f1f18]">
       <Navbar
         view={view === 'courses' ? 'courses' : 'home'}
         onNavigate={navigate}

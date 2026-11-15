@@ -152,6 +152,10 @@ export interface Translations {
     description: string
     upcomingBadge: string
     registrationOpen: string
+    paymentTitle: string
+    paymentSubtitle: string
+    paymentPrimary: string
+    paymentNote: string
     fullscreen: string
     download: string
     ledBy: string

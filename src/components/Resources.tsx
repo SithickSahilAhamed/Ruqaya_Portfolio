@@ -29,42 +29,42 @@ export function Resources() {
   return (
     <section
       id="resources"
-      className="py-20 lg:py-28 bg-[#F8F7F4] border-b border-black/10"
+      className="py-20 lg:py-28 bg-[#eef4f0] border-b border-[#0b3d2e]/10"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-3xl">
             <div className="label-mono mb-2">{t.resources.eyebrow}</div>
-            <h2 className="font-serif text-4xl sm:text-5xl text-[#1A1A1A] tracking-[-0.02em] font-normal">
+            <h2 className="font-serif text-4xl sm:text-5xl text-[#0f1f18] tracking-[-0.02em] font-normal">
               {t.resources.title}
             </h2>
-            <p className="mt-3 text-base text-[#1A1A1A]/75 font-light leading-relaxed">
+            <p className="mt-3 text-base text-[#0f1f18]/75 font-light leading-relaxed">
               {t.resources.subtitle}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-xs font-mono font-bold text-[#B8860B] uppercase tracking-wider">
+            <div className="text-xs font-mono font-bold text-[#145c45] uppercase tracking-wider">
               {t.resources.scholarBadge}
             </div>
-            <div className="text-xs font-mono text-[#1A1A1A]/60 mt-1">
+            <div className="text-xs font-mono text-[#0f1f18]/60 mt-1">
               {t.resources.scholarSub}
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-black/15 p-6 sm:p-8 mb-12">
+        <div className="bg-[#f7faf8] border border-[#0b3d2e]/15 p-6 sm:p-8 mb-12">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <span className="text-[0.65rem] font-mono font-bold uppercase tracking-wider bg-[#1A1A1A] text-[#F8F7F4] px-2.5 py-1">
+            <span className="text-[0.65rem] font-mono font-bold uppercase tracking-wider bg-[#0b3d2e] text-[#f7faf8] px-2.5 py-1">
               {t.resources.modelBadge}
             </span>
-            <span className="text-xs font-mono text-[#B8860B]">
+            <span className="text-xs font-mono text-[#145c45]">
               {t.resources.modelVenue}
             </span>
           </div>
-          <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A] font-normal leading-snug max-w-4xl">
+          <h3 className="font-serif text-2xl sm:text-3xl text-[#0f1f18] font-normal leading-snug max-w-4xl">
             {t.resources.modelTitle}
           </h3>
-          <p className="mt-3 text-sm sm:text-base text-[#1A1A1A]/75 font-light leading-relaxed max-w-4xl">
+          <p className="mt-3 text-sm sm:text-base text-[#0f1f18]/75 font-light leading-relaxed max-w-4xl">
             {t.resources.modelDesc}
           </p>
 
@@ -72,7 +72,7 @@ export function Resources() {
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
-              className="inline-flex items-center gap-1.5 border border-black/20 font-mono text-xs uppercase tracking-[0.08em] px-4 py-2.5 hover:border-black/40 transition-colors"
+              className="inline-flex items-center gap-1.5 border border-[#0b3d2e]/20 font-mono text-xs uppercase tracking-[0.08em] px-4 py-2.5 hover:border-[#0b3d2e]/40 transition-colors"
             >
               <Expand className="w-3.5 h-3.5" />
               {t.resources.expandModel}
@@ -81,7 +81,7 @@ export function Resources() {
               href="https://doi.org/10.1007/s11356-025-36768-8"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.08em] px-4 py-2.5 hover:bg-[#333] transition-colors"
+              className="inline-flex items-center gap-1.5 bg-[#0b3d2e] text-[#f7faf8] font-mono text-xs uppercase tracking-[0.08em] px-4 py-2.5 hover:bg-[#145c45] transition-colors"
             >
               {t.resources.readPaper}
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -98,23 +98,23 @@ export function Resources() {
               alt={t.resources.modelTitle}
               className="max-h-[500px] w-auto object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
             />
-            <div className="text-center text-xs font-mono text-[#1A1A1A]/50 mt-3">
+            <div className="text-center text-xs font-mono text-[#0f1f18]/50 mt-3">
               {t.resources.clickFullscreen}
             </div>
           </button>
 
           {expanded && (
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-black/10">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-[#0b3d2e]/10">
               {t.resources.phases.map((phase) => (
-                <div key={phase.title} className="p-4 bg-[#F8F7F4] border border-black/10">
+                <div key={phase.title} className="p-4 bg-[#eef4f0] border border-[#0b3d2e]/10">
                   <div className="label-mono mb-3">{phase.title}</div>
                   <ul className="space-y-2">
                     {phase.items.map((item) => (
                       <li
                         key={item}
-                        className="text-xs text-[#1A1A1A]/80 font-light flex gap-1.5"
+                        className="text-xs text-[#0f1f18]/80 font-light flex gap-1.5"
                       >
-                        <span className="text-[#B8860B]">•</span>
+                        <span className="text-[#145c45]">•</span>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -127,13 +127,13 @@ export function Resources() {
 
         <div className="flex flex-col md:flex-row gap-4 md:items-center mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A1A1A]/40" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0f1f18]/40" />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t.resources.searchPlaceholder}
-              className="w-full bg-white border border-black/15 pl-10 pr-4 py-3 text-sm font-light focus:outline-none focus:border-black/40"
+              className="w-full bg-[#f7faf8] border border-[#0b3d2e]/15 pl-10 pr-4 py-3 text-sm font-light focus:outline-none focus:border-[#0b3d2e]/40"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -144,8 +144,8 @@ export function Resources() {
                 onClick={() => setFilter(f.id)}
                 className={`font-mono text-xs tracking-[0.05em] uppercase px-4 py-2.5 transition-colors ${
                   filter === f.id
-                    ? 'bg-[#1A1A1A] text-[#F8F7F4] font-bold'
-                    : 'bg-white border border-black/10 text-[#1A1A1A]/70 hover:border-black/30'
+                    ? 'bg-[#0b3d2e] text-[#f7faf8] font-bold'
+                    : 'bg-[#f7faf8] border border-[#0b3d2e]/10 text-[#0f1f18]/70 hover:border-[#0b3d2e]/30'
                 }`}
               >
                 {f.label}
@@ -158,20 +158,20 @@ export function Resources() {
           {filtered.map((pub) => (
             <article
               key={pub.id}
-              className="bg-white border border-black/10 hover:border-black/25 transition-colors p-5 sm:p-6"
+              className="bg-[#f7faf8] border border-[#0b3d2e]/10 hover:border-[#0b3d2e]/25 transition-colors p-5 sm:p-6"
             >
-              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#B8860B] mb-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#145c45] mb-2">
                 <span className="font-bold uppercase tracking-wider">{pub.venue}</span>
-                <span className="text-[#1A1A1A]/30">·</span>
+                <span className="text-[#0f1f18]/30">·</span>
                 <span>{pub.year}</span>
-                <span className="text-[#1A1A1A]/30">·</span>
-                <span className="text-[#1A1A1A]/60">{pub.meta}</span>
+                <span className="text-[#0f1f18]/30">·</span>
+                <span className="text-[#0f1f18]/60">{pub.meta}</span>
               </div>
-              <h3 className="font-serif text-xl sm:text-2xl text-[#1A1A1A] font-normal leading-snug">
+              <h3 className="font-serif text-xl sm:text-2xl text-[#0f1f18] font-normal leading-snug">
                 {pub.title}
               </h3>
-              <div className="mt-2 text-xs font-mono text-[#1A1A1A]/60">{pub.authors}</div>
-              <p className="mt-3 text-sm text-[#1A1A1A]/75 font-light leading-relaxed">
+              <div className="mt-2 text-xs font-mono text-[#0f1f18]/60">{pub.authors}</div>
+              <p className="mt-3 text-sm text-[#0f1f18]/75 font-light leading-relaxed">
                 {pub.summary}
               </p>
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -179,7 +179,7 @@ export function Resources() {
                   {pub.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[0.65rem] font-mono bg-[#F8F7F4] border border-black/10 px-2 py-1"
+                      className="text-[0.65rem] font-mono bg-[#eef4f0] border border-[#0b3d2e]/10 px-2 py-1"
                     >
                       {tag}
                     </span>
@@ -189,7 +189,7 @@ export function Resources() {
                   href={pub.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 font-mono text-xs font-bold uppercase tracking-[0.06em] text-[#1A1A1A] hover:text-[#B8860B] transition-colors"
+                  className="inline-flex items-center gap-1 font-mono text-xs font-bold uppercase tracking-[0.06em] text-[#0f1f18] hover:text-[#145c45] transition-colors"
                 >
                   {t.resources.viewPaper}
                   <ArrowUpRight className="w-3.5 h-3.5" />

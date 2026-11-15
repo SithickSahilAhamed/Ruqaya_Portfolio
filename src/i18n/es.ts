@@ -24,7 +24,7 @@ export const es: Translations = {
       'Servicios de análisis de ciclo de vida (ACV), ESG y huella de carbono',
     ],
     bookServices: 'Reservar Servicios',
-    upcomingCourse: 'Próximo Curso (ISO 59004)',
+    upcomingCourse: 'Curso En Curso (ISO 59004)',
     expertProfile: 'Perfil de Nuestra Experta',
     metrics: [
       {
@@ -58,7 +58,7 @@ export const es: Translations = {
         id: '01',
         track: 'Línea 01',
         title: 'Desarrollo de Capacidades',
-        primaryCta: 'Próximos Cursos',
+        primaryCta: 'Cursos En Curso',
         primaryAction: 'courses',
         secondaryCta: 'Solicitar Capacitación',
         secondaryAction: 'contact',
@@ -495,14 +495,19 @@ export const es: Translations = {
   },
   courses: {
     back: 'Volver al Sitio Principal',
-    cohortOpen: 'Cohorte Próxima Abierta',
+    cohortOpen: 'Cohorte En Curso Abierta',
     cohortMeta: 'Sesiones En Línea en Vivo · Noviembre 2026',
     eyebrow: 'Academia Ejecutiva RUQAYA · Desarrollo de Capacidades',
     title: 'Cursos y Programas de Capacitación',
     description:
       'Más allá de seminarios introductorios superficiales. Impartimos capacitación práctica y fundamentada en normas internacionales, diseñada para equipar a ejecutivos, ingenieros y equipos de sostenibilidad con herramientas reales de implementación de economía circular.',
-    upcomingBadge: 'Curso En Vivo Próximo',
+    upcomingBadge: 'Curso En Vivo En Curso',
     registrationOpen: 'Inscripciones Abiertas · Cupos Limitados',
+    paymentTitle: 'Inscripción y Pago Seguro',
+    paymentSubtitle:
+      'Reserve su lugar primero. Tras la confirmación se comparte un enlace de pago confiable (tarjeta / transferencia) de forma privada — sin exponer comisiones públicas en la página.',
+    paymentPrimary: 'Solicitar Enlace de Pago Seguro',
+    paymentNote: 'Listo para pasarela · Factura disponible · MXN y USD',
     fullscreen: 'Folleto en Pantalla Completa',
     download: 'Descargar Folleto',
     ledBy: 'Impartido por Dra. Hammadhu Rukiya Jalva',
