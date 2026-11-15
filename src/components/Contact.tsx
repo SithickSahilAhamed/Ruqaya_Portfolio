@@ -70,54 +70,54 @@ export function Contact() {
   return (
     <section
       id="contact"
-      className="py-20 lg:py-28 bg-[#F8F7F4] border-b border-black/10"
+      className="py-20 lg:py-28 section-grain border-b border-[#0b3d2e]/10"
     >
       <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12">
         <div className="mb-10">
           <div className="label-mono mb-2">{t.contact.eyebrow}</div>
-          <h2 className="font-serif text-4xl sm:text-5xl text-[#1A1A1A] tracking-[-0.02em] font-normal">
+          <h2 className="font-serif text-4xl sm:text-5xl text-[#0f1f18] tracking-[-0.02em] font-normal">
             {t.contact.title}
           </h2>
-          <p className="mt-3 text-base text-[#1A1A1A]/75 font-light">
+          <p className="mt-3 text-base text-[#0f1f18]/75 font-light">
             {t.contact.subtitle}
           </p>
-          <p className="mt-1 text-sm font-mono text-[#B8860B]">{t.contact.regions}</p>
+          <p className="mt-1 text-sm font-mono text-[#145c45]">{t.contact.regions}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           <div className="lg:col-span-5 space-y-3">
             <a
               href="mailto:hammadhu@ruqaya.org"
-              className="flex items-start gap-3 p-4 bg-white border border-black/10 hover:border-black/30 transition-colors"
+              className="flex items-start gap-3 p-4 bg-[#f7faf8] border border-[#0b3d2e]/10 hover:border-[#0b3d2e]/30 transition-colors"
             >
-              <Mail className="w-4 h-4 text-[#B8860B] mt-0.5 shrink-0" />
+              <Mail className="w-4 h-4 text-[#145c45] mt-0.5 shrink-0" />
               <div>
                 <div className="label-mono mb-1">{t.contact.emailLabel}</div>
-                <div className="text-sm text-[#1A1A1A]">hammadhu@ruqaya.org</div>
+                <div className="text-sm text-[#0f1f18]">hammadhu@ruqaya.org</div>
               </div>
             </a>
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-start gap-3 p-4 bg-white border border-black/10 hover:border-black/30 transition-colors"
+              className="flex items-start gap-3 p-4 bg-[#f7faf8] border border-[#0b3d2e]/10 hover:border-[#0b3d2e]/30 transition-colors"
             >
-              <MessageCircle className="w-4 h-4 text-[#B8860B] mt-0.5 shrink-0" />
+              <MessageCircle className="w-4 h-4 text-[#145c45] mt-0.5 shrink-0" />
               <div>
                 <div className="label-mono mb-1">{t.contact.whatsappLabel}</div>
-                <div className="text-sm text-[#1A1A1A]">+52 5571986833</div>
+                <div className="text-sm text-[#0f1f18]">+52 5571986833</div>
               </div>
             </a>
             <a
               href="https://www.linkedin.com/in/hammadhu/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-start gap-3 p-4 bg-white border border-black/10 hover:border-black/30 transition-colors"
+              className="flex items-start gap-3 p-4 bg-[#f7faf8] border border-[#0b3d2e]/10 hover:border-[#0b3d2e]/30 transition-colors"
             >
-              <Linkedin className="w-4 h-4 text-[#B8860B] mt-0.5 shrink-0" />
+              <Linkedin className="w-4 h-4 text-[#145c45] mt-0.5 shrink-0" />
               <div>
                 <div className="label-mono mb-1">{t.contact.linkedinLabel}</div>
-                <div className="text-sm text-[#1A1A1A]">{t.contact.linkedinText}</div>
+                <div className="text-sm text-[#0f1f18]">{t.contact.linkedinText}</div>
               </div>
             </a>
           </div>
@@ -132,7 +132,7 @@ export function Contact() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t.contact.namePlaceholder}
                 required
-                className="w-full bg-white border border-black/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-black/40"
+                className="w-full bg-[#f7faf8] border border-[#0b3d2e]/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-[#0b3d2e]/40"
               />
             </div>
             <div>
@@ -144,7 +144,7 @@ export function Contact() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t.contact.emailPlaceholder}
                 required
-                className="w-full bg-white border border-black/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-black/40"
+                className="w-full bg-[#f7faf8] border border-[#0b3d2e]/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-[#0b3d2e]/40"
               />
             </div>
             <div>
@@ -156,7 +156,7 @@ export function Contact() {
                 placeholder={t.contact.messagePlaceholder}
                 rows={5}
                 required
-                className="w-full bg-white border border-black/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-black/40 resize-y"
+                className="w-full bg-[#f7faf8] border border-[#0b3d2e]/15 px-4 py-3 text-sm font-light focus:outline-none focus:border-[#0b3d2e]/40 resize-y"
               />
             </div>
 
@@ -166,7 +166,7 @@ export function Contact() {
               </p>
             )}
             {success && (
-              <p className="text-sm text-[#135D29] font-light" role="status">
+              <p className="text-sm text-[#145c45] font-light" role="status">
                 {success}
               </p>
             )}
@@ -176,7 +176,7 @@ export function Contact() {
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 border border-black/20 font-mono text-xs uppercase tracking-[0.08em] px-5 py-3.5 hover:border-black/40 transition-colors"
+                className="inline-flex items-center justify-center gap-2 border border-[#0b3d2e]/20 font-mono text-xs uppercase tracking-[0.08em] px-5 py-3.5 hover:border-[#0b3d2e]/40 transition-colors"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
                 {t.contact.whatsappCta}
@@ -184,7 +184,7 @@ export function Contact() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center bg-[#1A1A1A] text-[#F8F7F4] font-mono text-xs uppercase tracking-[0.12em] px-8 py-3.5 hover:bg-[#B8860B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center bg-[#0b3d2e] text-[#f7faf8] font-mono text-xs uppercase tracking-[0.12em] px-8 py-3.5 hover:bg-[#145c45] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {submitting ? t.contact.sending : t.contact.send}
               </button>

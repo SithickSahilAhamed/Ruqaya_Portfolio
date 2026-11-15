@@ -45,8 +45,10 @@ export function Navbar({
 
   return (
     <header
-      className={`sticky top-0 z-40 bg-[#F8F7F4]/95 backdrop-blur-md border-b border-black/10 px-4 sm:px-8 lg:px-12 py-3.5 sm:py-4 transition-shadow ${
-        scrolled ? 'shadow-sm' : ''
+      className={`sticky top-0 z-40 border-b px-4 sm:px-8 lg:px-12 py-3.5 sm:py-4 transition-all ${
+        scrolled
+          ? 'bg-[#06281c]/95 backdrop-blur-md border-white/10 shadow-[0_8px_30px_rgba(6,40,28,0.35)]'
+          : 'bg-[#06281c] border-white/10'
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-6 lg:gap-8">
@@ -56,7 +58,7 @@ export function Navbar({
           className="flex items-center gap-3 shrink-0 text-left"
           aria-label="RUQAYA home"
         >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-md overflow-hidden border border-black/10 bg-white shrink-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-md overflow-hidden border border-white/20 bg-white shrink-0">
             <img
               src="/assets/logo.jpg"
               alt="RUQAYA Logo"
@@ -64,10 +66,10 @@ export function Navbar({
             />
           </div>
           <div className="min-w-0">
-            <div className="font-serif text-xl sm:text-2xl leading-none tracking-tight text-[#1A1A1A]">
+            <div className="font-serif text-xl sm:text-2xl leading-none tracking-tight text-white">
               RUQAYA
             </div>
-            <div className="hidden sm:block text-[0.62rem] font-serif text-[#B8860B] leading-snug max-w-[14rem]">
+            <div className="hidden sm:block text-[0.62rem] font-serif text-[#b7d478] leading-snug max-w-[14rem]">
               {t.nav.tagline}
             </div>
           </div>
@@ -79,17 +81,17 @@ export function Navbar({
               key={link.id}
               type="button"
               onClick={() => handleLink(link.id, link.isCourses)}
-              className={`font-mono text-[0.8rem] tracking-[0.04em] transition-colors inline-flex items-center gap-1.5 ${
+              className={`font-mono text-[0.78rem] tracking-[0.04em] transition-colors inline-flex items-center gap-1.5 ${
                 link.isCourses
-                  ? 'text-[#0D6B57] font-bold'
+                  ? 'text-[#b7d478] font-bold'
                   : link.accent
-                    ? 'text-[#B8860B] font-bold'
-                    : 'text-[#1A1A1A]/80 hover:text-[#1A1A1A] font-normal'
+                    ? 'text-[#d4af37] font-bold'
+                    : 'text-white/75 hover:text-white font-normal'
               } ${view === 'courses' && link.isCourses ? 'underline underline-offset-4' : ''}`}
             >
               {link.label}
               {link.isCourses && (
-                <span className="bg-[#C7EB68] text-[#0C2B22] text-[0.55rem] font-bold px-1.5 py-0.5 rounded-sm tracking-wider">
+                <span className="bg-[#b7d478] text-[#0c2b22] text-[0.55rem] font-bold px-1.5 py-0.5 tracking-wider">
                   {t.nav.coursesNew}
                 </span>
               )}
@@ -98,27 +100,23 @@ export function Navbar({
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 font-mono text-[0.7rem] font-bold">
-            <Globe className="w-3.5 h-3.5 text-[#1A1A1A]/70" aria-hidden />
+          <div className="hidden sm:flex items-center gap-1.5 font-mono text-[0.7rem] font-bold text-white/80">
+            <Globe className="w-3.5 h-3.5" aria-hidden />
             <button
               type="button"
               onClick={() => setLang('en')}
-              className={`px-1.5 py-0.5 rounded-sm tracking-[0.04em] ${
-                lang === 'en'
-                  ? 'bg-[#1A1A1A] text-[#F8F7F4]'
-                  : 'text-[#1A1A1A]/60 hover:text-[#1A1A1A]'
+              className={`px-1.5 py-0.5 tracking-[0.04em] ${
+                lang === 'en' ? 'bg-white text-[#06281c]' : 'text-white/60 hover:text-white'
               }`}
             >
               EN
             </button>
-            <span className="text-[#1A1A1A]/30">|</span>
+            <span className="text-white/30">|</span>
             <button
               type="button"
               onClick={() => setLang('es')}
-              className={`px-1.5 py-0.5 rounded-sm tracking-[0.04em] ${
-                lang === 'es'
-                  ? 'bg-[#1A1A1A] text-[#F8F7F4]'
-                  : 'text-[#1A1A1A]/60 hover:text-[#1A1A1A]'
+              className={`px-1.5 py-0.5 tracking-[0.04em] ${
+                lang === 'es' ? 'bg-white text-[#06281c]' : 'text-white/60 hover:text-white'
               }`}
             >
               ES
@@ -128,7 +126,7 @@ export function Navbar({
           <button
             type="button"
             onClick={onBookServices}
-            className="hidden md:inline-flex items-center gap-1.5 bg-[#1A1A1A] text-[#F8F7F4] font-mono text-[0.7rem] font-bold uppercase tracking-[0.12em] px-5 py-2.5 hover:bg-[#B8860B] transition-colors"
+            className="hidden md:inline-flex items-center gap-1.5 bg-[#b7d478] text-[#0c2b22] font-mono text-[0.7rem] font-bold uppercase tracking-[0.12em] px-5 py-2.5 hover:bg-[#c6e08a] transition-colors"
           >
             {t.nav.bookServices}
             <ArrowRight className="w-3.5 h-3.5" />
@@ -136,7 +134,7 @@ export function Navbar({
 
           <button
             type="button"
-            className="lg:hidden p-2 text-[#1A1A1A]"
+            className="lg:hidden p-2 text-white"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
@@ -146,7 +144,7 @@ export function Navbar({
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden mt-4 border-t border-black/10 pt-4 pb-2 max-w-7xl mx-auto">
+        <div className="lg:hidden mt-4 border-t border-white/10 pt-4 pb-2 max-w-7xl mx-auto">
           <div className="flex flex-col gap-3">
             {links.map((link) => (
               <button
@@ -155,33 +153,33 @@ export function Navbar({
                 onClick={() => handleLink(link.id, link.isCourses)}
                 className={`font-mono text-sm text-left tracking-[0.04em] inline-flex items-center gap-2 ${
                   link.isCourses
-                    ? 'text-[#0D6B57] font-bold'
+                    ? 'text-[#b7d478] font-bold'
                     : link.accent
-                      ? 'text-[#B8860B] font-bold'
-                      : 'text-[#1A1A1A]'
+                      ? 'text-[#d4af37] font-bold'
+                      : 'text-white'
                 }`}
               >
                 {link.label}
                 {link.isCourses && (
-                  <span className="bg-[#C7EB68] text-[#0C2B22] text-[0.55rem] font-bold px-1.5 py-0.5 rounded-sm">
+                  <span className="bg-[#b7d478] text-[#0c2b22] text-[0.55rem] font-bold px-1.5 py-0.5">
                     {t.nav.coursesNew}
                   </span>
                 )}
               </button>
             ))}
-            <div className="flex items-center gap-2 pt-2 font-mono text-xs font-bold">
+            <div className="flex items-center gap-2 pt-2 font-mono text-xs font-bold text-white">
               <Globe className="w-3.5 h-3.5" />
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`px-2 py-1 rounded-sm ${lang === 'en' ? 'bg-[#1A1A1A] text-white' : ''}`}
+                className={`px-2 py-1 ${lang === 'en' ? 'bg-white text-[#06281c]' : ''}`}
               >
                 EN
               </button>
               <button
                 type="button"
                 onClick={() => setLang('es')}
-                className={`px-2 py-1 rounded-sm ${lang === 'es' ? 'bg-[#1A1A1A] text-white' : ''}`}
+                className={`px-2 py-1 ${lang === 'es' ? 'bg-white text-[#06281c]' : ''}`}
               >
                 ES
               </button>
@@ -192,7 +190,7 @@ export function Navbar({
                 setMobileOpen(false)
                 onBookServices()
               }}
-              className="mt-1 inline-flex items-center justify-center gap-1.5 bg-[#1A1A1A] text-[#F8F7F4] font-mono text-[0.7rem] font-bold uppercase tracking-[0.12em] px-5 py-3"
+              className="mt-1 inline-flex items-center justify-center gap-1.5 bg-[#b7d478] text-[#0c2b22] font-mono text-[0.7rem] font-bold uppercase tracking-[0.12em] px-5 py-3"
             >
               {t.nav.bookServices}
               <ArrowRight className="w-3.5 h-3.5" />
